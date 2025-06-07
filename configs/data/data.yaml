@@ -1,0 +1,9 @@
+train_path: data/train
+val_path: data/val
+test_path: data/test
+batch_size: 100
+input_size: 28
+hidden_size: 128
+num_layers: 2
+num_classes: 10
+sequence_length: 28

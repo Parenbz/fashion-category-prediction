@@ -1,0 +1,8 @@
+defaults:
+  - data: data
+  - model: model
+  - train: train
+
+hydra:
+  run:
+    dir: outputs/${now:%Y-%m-%d_%H-%M-%S}
