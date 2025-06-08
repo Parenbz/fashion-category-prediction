@@ -3,4 +3,3 @@
 /tmp/*
 .dvcignore
 !/tmp/dvcstore
-/tmp
