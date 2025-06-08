@@ -1,7 +1,6 @@
-train_path: data/train
-val_path: data/val
-test_path: data/test
-batch_size: 100
+train_path: data/train.csv
+input_path: data/input.csv
+test_path: data/test.csv
 input_size: 28
 hidden_size: 128
 num_layers: 2

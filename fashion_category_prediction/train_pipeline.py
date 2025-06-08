@@ -2,10 +2,9 @@ import hydra
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torchvision.datasets as datasets
-import torchvision.transforms as transforms
 from omegaconf import DictConfig
 
+from fashion_category_prediction.data.datamodule import FashionDataset
 from fashion_category_prediction.models.rnn import RNN
 
 # Set device
@@ -15,17 +14,11 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def train_main(cfg: DictConfig):
 
-    # Load Fashion-MNIST dataset
-    train_dataset = datasets.FashionMNIST(
-        root="data/", train=True, transform=transforms.ToTensor(), download=True
-    )
+    train_dataset = FashionDataset(cfg.data.train_path)
 
-    # Create dataloaders
     train_loader = torch.utils.data.DataLoader(
-        dataset=train_dataset, batch_size=cfg.data.batch_size, shuffle=True
+        dataset=train_dataset, batch_size=cfg.train.batch_size, shuffle=True
     )
-
-    # Define the model
 
     model = RNN(
         cfg.data.input_size,
