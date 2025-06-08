@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 from omegaconf import DictConfig
+from torch.utils.tensorboard import SummaryWriter
+from torcheval.metrics.functional import multiclass_f1_score
 
 from fashion_category_prediction.data.datamodule import FashionDataset
 from fashion_category_prediction.models.rnn import RNN
@@ -13,6 +15,8 @@ device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 @hydra.main(version_base=None, config_path="../configs", config_name="config")
 def train_main(cfg: DictConfig):
+
+    writer = SummaryWriter(log_dir="plots/")
 
     train_dataset = FashionDataset(cfg.data.train_path)
 
@@ -44,6 +48,35 @@ def train_main(cfg: DictConfig):
             outputs = model(images)
             loss = criterion(outputs, labels)
 
+            writer.add_scalar(
+                "F1-micro/train, lr = {}, batch size = {}".format(
+                    cfg.train.learning_rate, cfg.train.batch_size
+                ),
+                multiclass_f1_score(
+                    input=outputs, target=labels, num_classes=cfg.data.num_classes
+                ),
+                epoch,
+            )
+            writer.add_scalar(
+                "F1-weighted/train, lr = {}, batch size = {}".format(
+                    cfg.train.learning_rate, cfg.train.batch_size
+                ),
+                multiclass_f1_score(
+                    input=outputs,
+                    target=labels,
+                    num_classes=cfg.data.num_classes,
+                    average="weighted",
+                ),
+                epoch,
+            )
+            writer.add_scalar(
+                "Loss/train, lr = {}, batch size = {}".format(
+                    cfg.train.learning_rate, cfg.train.batch_size
+                ),
+                loss,
+                epoch,
+            )
+
             # Backward and optimize
             optimizer.zero_grad()
             loss.backward()
@@ -61,3 +94,5 @@ def train_main(cfg: DictConfig):
                 )
 
     torch.save(model.state_dict(), cfg.model.path)
+
+    writer.flush()
