@@ -17,7 +17,7 @@ cd fashion-category-prediction
 poetry install
 ```
 
-Загрузите данные для обучения модели (в качестве удалённого DVC репозитория используется .dvc/tmp):
+Загрузите данные для обучения модели (в качестве удалённого DVC репозитория используется gdrive):
 
 ```bash
 poetry run dvc pull

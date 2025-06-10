@@ -1,5 +1,3 @@
 /config.local
+/tmp
 /cache
-/tmp/*
-.dvcignore
-!/tmp/dvcstore
